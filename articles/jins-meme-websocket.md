@@ -3,7 +3,7 @@ title: "JiNS MEME のセンサーデータを簡易WebSocketサーバで受信�
 emoji: "👓"
 type: "tech"
 topics: ["MEME","IoT"] # タグ。["markdown", "rust", "aws"]のように指定する
-published: true
+published: false
 ---
 
 JINS MEME Platformでは、簡易WebSocketサーバによるセンサーデータ受信のサンプルが公開されています。本記事は、その利用方法のメモです。

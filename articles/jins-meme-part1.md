@@ -3,7 +3,7 @@ title: "JiNS MEME で良い姿勢をキープする"
 emoji: "👓"
 type: "tech"
 topics: ["MEME","IoT"] # タグ。["markdown", "rust", "aws"]のように指定する
-published: true
+published: false
 ---
 
 
