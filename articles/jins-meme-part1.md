@@ -122,31 +122,23 @@ Chart
 ![](https://storage.googleapis.com/zenn-user-upload/abb9c25651e7-20211123.png)
 5. 3. 4. の手順を、`accY` についても同様に行います。それらを実施したフローが以下になります
 ![](https://storage.googleapis.com/zenn-user-upload/640c3584911f-20211123.png)
-6. 一旦のDashboardが完成したので、JINS MEME Loggerアプリからセンサーデータを転送し、ダッシュボードの表示を確認します。ダッシュボードは、http://`<RaspberryPi_ip_or_host>`:`<port>`/ui にアクセスすると確認できます。下の例では、左にDashboard、右にJINS MEMEアプリの画面を並べて表示しています。リアルタイムに同じ結果が得られていることがわかります
-![](https://storage.googleapis.com/zenn-user-upload/3da50fe6ab47-20211123.gif)
-7. さらにメトリクスを加え以下が見られるようにしたフローとDashboardがそれぞれ以下になります
-可視化対象
-| metrics名     | 説明   | Head |
-| ------------- | ------ | ---- |
-| accX          | 頭の傾き（左右） | Gauge |
-| accX          | ↑  | Chart |
-| accY          | 頭の傾き（前後）   | Gauge |
-| accY          | ↑   | Chart |
-| blinkSpeed    | まばたき速度   | Chart |
-| blinkStrength | まばたき強さ   | Chart |
-| eyeMoveUp     | 目線の移動（上）   | Chart |
-| eyeMoveDown   | 目線の移動（下）   | Chart |
-| eyeMoveLeft   | 目線の移動（左）   | Chart |
-| eyeMoveRight  | 目線の移動（右）   | Chart |
-フロー定義
-![スクリーンショット 2021-11-23 14.02.30.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/88184/bd1435db-9d4c-d69c-c29c-3c26b6a4f57b.png )
-ダッシュボード  
-![スクリーンショット 2021-11-23 13.50.20.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/88184/afa5992f-bcc5-1604-016f-e9516d0061c1.png)
+6. JINS MEME Loggerアプリからセンサーデータを転送し、ダッシュボードの表示を確認します。ダッシュボードは、http://`<RaspberryPi_ip_or_host>`:`<port>`/ui にアクセスすると確認できます。下の例では、左にDashboard、右にJINS MEMEアプリの画面を並べて表示しています。リアルタイムに同じ結果が得られていることがわかります
+![](/images/dashboard_meme_1080p.gif =640x)
 
 
 # センサー情報の活用
 
-JINS MEMEのセンサー情報を収集できるようになったので、次は収集したデータを元に
+JINS MEMEのセンサー情報を収集できるようになったので、次はいよいよ収集したデータを使って
+
+## Step1. Node-Red と Philips Hue の接続
+
+![]()
+![]()
+![]()
+![]()
+![]()
+
+## Step2. Node-Red と Philips Hue の接続
 
 
 # References
