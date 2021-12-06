@@ -6,10 +6,14 @@ topics: ["MEME","IoT"] # タグ。["markdown", "rust", "aws"]のように指定�
 published: true
 ---
 
+# これは何？
 
-## はじめに
+JINS MEME を使って、姿勢が悪くなったらライトの色で教えてくれるヤツを作ってみた という記事です。  
+[NSSOL Advent Calendar 2021](https://qiita.com/advent-calendar/2021/nssol) 7日目の記事になります。
 
-2021/10 にメガネメーカーのJINSからウェアラブル端末｢JINS MEME｣の新型が発売されました。｢JINS MEME｣は、メガネの鼻当て部分にセンサーを搭載したウェアラブルデバイスで、センサーがスマートフォンアプリと連携して様々な機能を提供してくれる「ココロとカラダのセルフケアメガネ」というコンセプトのデバイスです。
+# はじめに
+
+2021/10 JINSからウェアラブル端末｢JINS MEME｣の新型が発売されました。｢JINS MEME｣は、メガネの鼻当て部分にセンサーを搭載したウェアラブルデバイスで、センサーがスマートフォンアプリと連携して様々な機能を提供してくれる「ココロとカラダのセルフケアメガネ」というコンセプトのデバイスです。
 公式サイトの動画をご覧いただくと、詳しいイメージが見られます（https://jinsmeme.com ）。
 
 
@@ -18,7 +22,7 @@ JINSのウェアラブルデバイスはDeveloper向けのプログラムが充�
 本記事では、JINS MEMEから取得したセンサーデータを元に良い姿勢が保たれているかを判定し、スマートライト（Philips Hue）の色を変化させることで、専用アプリ無しでも視覚的に自分の状態が分かるようにしてみます。
 
 
-## 作るもの
+# 作るもの
 
 RaspberryPi上に立てた Node-Red をハブにして、MEMEから取得したセンサーデータを元にHue BridgeのAPIを呼び出しPhilips Hue Lightの色を変化させます。
 
@@ -61,9 +65,9 @@ https://youtu.be/eEy5QCTcw_E
 1. `node-red-start` コマンドでNode-Redを起動し、http://`<server-ip/host>`:1880 にアクセスし起動状態を確認します
 
 
-# JINS MEME センサー情報の受信
+# センサー情報の受信
 
-続いて、iOS アプリ [JINS MEME Logger](https://apps.apple.com/jp/app/jins-meme-logger/id1537937129) とJINS MEMEデバイスを接続します。  
+準備が整ったので、まずは iOS アプリ [JINS MEME Logger](https://apps.apple.com/jp/app/jins-meme-logger/id1537937129) とJINS MEMEデバイスを接続していきます。  
 
 ## Step1. JINS MEME Loggerアプリの設定
 
