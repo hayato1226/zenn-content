@@ -8,7 +8,7 @@ published: true
 
 # これは何？
 
-JINS MEME を使って、姿勢が悪くなったらライトの色で教えてくれるヤツを作ってみた という記事です。  
+JINS MEME を使って、姿勢が悪くなったらライトの色で教えてくれるものを作ってみた という記事です。  
 [NSSOL Advent Calendar 2021](https://qiita.com/advent-calendar/2021/nssol) 7日目の記事になります。
 
 # はじめに
