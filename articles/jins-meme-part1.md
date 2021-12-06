@@ -76,7 +76,7 @@ https://youtu.be/eEy5QCTcw_E
 ![](/images/meme-logger-setup-02.png =350x)
 
 
-※ JINS Platformでは、簡易にWebSocket接続を試すためのスクリプトを公開しています。こちらを利用したい場合は、[この記事]()をご覧ください
+※ JINS Platformでは、簡易にWebSocket接続を試すためのスクリプトを公開しています。こちらを利用したい場合は、[この記事](https://zenn.dev/hayato1226/articles/jins-meme-websocket)をご覧ください
 
 
 ## Step2. Node-Redでセンサーデータを受信する
@@ -181,7 +181,7 @@ JINS MEMEのセンサーとNode-Redを連携させ、センサデータを取得
 
 最後のステップとして、ダッシュボードを表示させたフローに追加でHue Lightの制御を組み込んでいきます。
 今回は、簡略化して　前後の頭の傾きを姿勢の良さの指標に使っていきます（多くのメトリクスを組み合わせたより精緻な判定は今後検討していきます）。  
-完成図がこちらのようになります。順を追って要素ごとに解説していきます。
+完成図はこんな感じです。順を追って要素ごとに解説していきます。
 
 ![](/images/flow-over-view.png)
 
