@@ -1,5 +1,5 @@
 ---
-title: "JiNS MEME で良い姿勢をキープする"
+title: "JINS MEME で良い姿勢をキープしたい"
 emoji: "👓"
 type: "tech"
 topics: ["MEME","IoT"] # タグ。["markdown", "rust", "aws"]のように指定する
@@ -24,12 +24,12 @@ RaspberryPi上に立てた Node-Red をハブにして、MEMEから取得した�
 
 ![arch](/images/arch.png)
 
-完成品はこんな感じです
+完成品はこんな感じです (メガネの傾きを検知して、ライトの色が青から黄色、赤へと変化します)
 
 https://youtu.be/eEy5QCTcw_E
 
 
-# Raspberry pi のセットアップ
+# 下準備（Raspberry pi のセットアップ）
 
 まずは、センサーデータとスマートライトを接続するハブとなるRaspberry Piをセットアップしていきます。
 
@@ -132,7 +132,7 @@ Chart
 ![](/images/dashboard_meme_1080p.gif =640x)
 
 
-# センサー情報の活用
+# スマートライトと繋げる
 
 JINS MEMEのセンサーとNode-Redを連携させ、センサデータを取得できるようになったので、
 次はNode-RedからHueに命令を送れるように設定していきます。
