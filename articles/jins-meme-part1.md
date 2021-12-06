@@ -3,29 +3,35 @@ title: "JiNS MEME で良い姿勢をキープする"
 emoji: "👓"
 type: "tech"
 topics: ["MEME","IoT"] # タグ。["markdown", "rust", "aws"]のように指定する
-published: false
+published: true
 ---
 
 
 ## はじめに
 
-今年の10月（2021/10）にJINSからメガネ型のウェアラブル端末｢JINS MEME｣の新型が発売されました。｢JINS MEME｣とは、メガネの鼻当て部分にCOREという2つのセンサーを搭載したウェアラブルデバイスで、このセンサーがスマートフォンアプリとbluetoothで連携することで様々な機能を提供してくれる「ココロとカラダのセルフケアメガネ」というコンセプトのデバイスです。
-詳しくはこんな感じ（https://jinsmeme.com ）
+2021/10 にメガネメーカーのJINSからウェアラブル端末｢JINS MEME｣の新型が発売されました。｢JINS MEME｣は、メガネの鼻当て部分にセンサーを搭載したウェアラブルデバイスで、センサーがスマートフォンアプリと連携して様々な機能を提供してくれる「ココロとカラダのセルフケアメガネ」というコンセプトのデバイスです。
+公式サイトの動画をご覧いただくと、詳しいイメージが見られます（https://jinsmeme.com ）。
 
 
-今回発売された新型MEMEは、SDKは提供されないもののセンサーデータは公式のLoggerアプリやWebAPIを通じてDeveloper向け公開されており、取得し活用することができるようになっています。
+JINSのウェアラブルデバイスはDeveloper向けのプログラムが充実しており、今回発売された新型MEMEでも、公式のLoggerアプリやWebAPIを通じてセンサーデータを活用できるようになっています。
 
-前置きが長くなりましたが、本記事はこのJINS MEMEのセンサーデータを取得して、スマートライト（Philips Hue）と連携させて姿勢の監視をしてみます。
+本記事では、JINS MEMEから取得したセンサーデータを元に良い姿勢が保たれているかを判定し、スマートライト（Philips Hue）の色を変化させることで、専用アプリ無しでも視覚的に自分の状態が分かるようにしてみます。
 
 
 ## 作るもの
 
-RaspberryPiに立てた Node-Red をハブにして、MEMEのセンサーデータ取得からデータを元にPhilips Hueの明かりを変化させます。
+RaspberryPi上に立てた Node-Red をハブにして、MEMEから取得したセンサーデータを元にHue BridgeのAPIを呼び出しPhilips Hue Lightの色を変化させます。
 
-＜図を貼ります＞
+![arch](/images/arch.png)
+
+完成品はこんな感じです
+
+https://youtu.be/eEy5QCTcw_E
 
 
 # Raspberry pi のセットアップ
+
+まずは、センサーデータとスマートライトを接続するハブとなるRaspberry Piをセットアップしていきます。
 
 ## OSインストール
 
@@ -37,28 +43,27 @@ RaspberryPiに立てた Node-Red をハブにして、MEMEのセンサーデー�
    * Set hostname
    * Enable SSH
    * Set local Settings
-![](https://storage.googleapis.com/zenn-user-upload/70d265463005-20211123.png)
+![](/images/raspi-install-01.png)
 4. OSにRaspberry Pi OS、ストレージに挿入済みのSDカードを選択しイメージを書き込みます
-![](https://storage.googleapis.com/zenn-user-upload/609e359f196c-20211123.png)
+![](/images/raspi-install-02.png)
 
 ## Node-Redインストール
 
-センサーデータの収集と、外部のスマートライトとの連携のために、ビジュアルプログラミングツール [Node-Red](https://nodered.org) を活用するため、これを導入します。
+今回は、センサーデータの収集とスマートライトとの連携のため、ビジュアルプログラミングツール [Node-Red](https://nodered.org) を活用します。まずはこれを導入します。
 
 
 1. sshでRaspberryPiに接続します（予めDHCPでIPアドレスが割り振られるようにしておきます）
-1. Node-Redには便利なインストールコマンドがあるので、これを実行します
-```bash
-bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
-```
-質問にはいずれも `y` で回答しておきます  
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/88184/788d7e39-178a-d73a-9600-2a91867fcf86.png)
+1. Node-Redには便利なインストールコマンドがあるので、これを実行します（質問にはいずれも `y` で回答しておきます ）
+   ```bash
+   bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+   ```
+   ![](/images/raspi-install-03.png)
 1. `node-red-start` コマンドでNode-Redを起動し、http://`<server-ip/host>`:1880 にアクセスし起動状態を確認します
 
 
 # JINS MEME センサー情報の受信
 
-iOS アプリ JINS MEME Logger の導入を行い、自分のJINS MEMEデバイスと接続していきます。  
+続いて、iOS アプリ [JINS MEME Logger](https://apps.apple.com/jp/app/jins-meme-logger/id1537937129) とJINS MEMEデバイスを接続します。  
 
 ## Step1. JINS MEME Loggerアプリの設定
 
@@ -66,34 +71,35 @@ iOS アプリ JINS MEME Logger の導入を行い、自分のJINS MEMEデバイ�
 1. App Storeから [JINS MEME Logger](https://apps.apple.com/jp/app/jins-meme-logger/id1537937129)アプリをインストールします（120円かかります）
 1. JINS MEME Logger を起動し、検索 ボタンにてMEMEを探し接続。接続ができると、JINS MEME Loggerアプリ上でログが確認できます  
 端末を見つけ接続
-![](https://storage.googleapis.com/zenn-user-upload/9cfb0573e912-20211123.png =350x)
+![](/images/meme-logger-setup-01.png =350x)
 ログの表示
-![](https://storage.googleapis.com/zenn-user-upload/602c794cf17f-20211123.png =350x)
+![](/images/meme-logger-setup-02.png =350x)
 
 
-※ JINS Platformで提供されている簡易WebSocketサーバ利用したい場合、こちらの記事をご覧ください
+※ JINS Platformでは、簡易にWebSocket接続を試すためのスクリプトを公開しています。こちらを利用したい場合は、[この記事]()をご覧ください
 
 
-## Step2. RaspberryPi上のWebSocketサーバでセンサーデータを受信する
+## Step2. Node-Redでセンサーデータを受信する
 
-Node-Redでは、様々な機能を持ったノードを連結させて1つのフローを構成し複雑な機能を実現できます。
-Step1 で導入した JINS MEME Logger からのデータを Node-RedのWebSocket受信機能で受け取るため、まずはWebSocket受信用のノードと、結果を表示させるDebug用のノードだけのシンプルな構成でデータ受信を試していきます。
+Node-Redでは、様々な機能を持ったノードを連結させることで複雑な機能を実現できます。
+最初に、Step1 で導入した JINS MEME Logger からのデータを Node-RedのWebSocketサーバで受け取ります。まずはWebSocket受信用のノードと、結果を表示させるDebug用のノードだけのシンプルな構成でデータ受信を試していきます。
 
-1. データ受信のための `WebSocket in` のノードと、Debugノードを配置し、それぞれを連結させます  
-![](https://storage.googleapis.com/zenn-user-upload/a8b326e1066d-20211123.png)
+1. データ受信のための `WebSocket in` のノードと、結果確認のためのDebugノードを配置し、それぞれ連結させます  
+![](/images/node-red-websocket-01.png)
 プロパティには以下のように設定しておきます  
-![](https://storage.googleapis.com/zenn-user-upload/b0205913b6de-20211123.png =350x)
+![](/images/node-red-websocket-02.png =350x)
 1. 続いて、送信側となる iPhoneの JINS MEME Logger アプリを起動し、下部メニューの`設定` から WebSocketクライアント を追加します（ポート番号はNode-Redの環境に合わせて設定します）
-![](https://storage.googleapis.com/zenn-user-upload/1b21caa45b69-20211123.png =350x)
+![](/images/node-red-websocket-03.png =350x)
 1. Debugノードにて、jsonログが受信できていることを確認します
-![](https://storage.googleapis.com/zenn-user-upload/d6f4813ec408-20211123.gif)
+![](/images/node-red-websocket-04.gif)
 
-これで、JINS MEMEのセンサーデータを受信して活用していくための下準備が整いました。次の章では取得したセンサーデータを可視化するダッシュボードを作っていきます。
+これで、JINS MEMEのセンサーデータを受信できるようになりました。次はデバッグログ出力から少し進化させて、取得したセンサーデータを可視化するダッシュボードを作っていきます。
 
 
 # センサー情報の可視化
 
-RaspberryPiは、Pluginによって機能拡張することができます。Plug-inの中には、様々なデータを簡易に可視化するダッシュボード機能もあります。取得したデータを見やすく表示するため簡単なダッシュボードを作っていきます。
+Node-Red は、初期から使えるコアノードの他に、サードパーティノードを追加する事で簡単に機能拡張することができます。ノードの中には、様々なデータを簡易に可視化するダッシュボード機能を持つものもあります。  
+これを活用して、前項までで取得したデータを見やすく表示するため簡単なダッシュボードを作っていきます。
 
 ## Step1. Node-Red に node-red-dashboard plug-in を追加
 
@@ -108,7 +114,7 @@ RaspberryPiは、Pluginによって機能拡張することができます。Plu
 
 前章まで取得可能となったデータを元に、ダッシュボードに可視化を行うフローを作成していきます。
 
-1. WebSocketサーバからの受信データは msg.payload にJavascriptオブジェクトとして保持しているためこれをJSON文字列にパースするため`json`ノードを追加します
+1. WebSocketサーバからの受信データは msg.payload にJavascriptオブジェクトとして保持されています。まずはこれをJSON文字列にパースするため`json`ノードを追加します
 ![](https://storage.googleapis.com/zenn-user-upload/7b9afdad7552-20211123.png)
 2. パースしたJSON文字列から、まずは頭の左右の傾きに関するメトリクス `accX` を取得します。Dashboardに渡すため、`changeノード` をフローに追加し以下のように設定します
 ![](https://storage.googleapis.com/zenn-user-upload/1a32e7c79fe4-20211123.png)
@@ -128,21 +134,98 @@ Chart
 
 # センサー情報の活用
 
-JINS MEMEのセンサー情報を収集できるようになったので、次はいよいよ収集したデータを使って
+JINS MEMEのセンサーとNode-Redを連携させ、センサデータを取得できるようになったので、
+次はNode-RedからHueに命令を送れるように設定していきます。
 
-## Step1. Node-Red と Philips Hue の接続
+## Step1. Philips Hue Bridge API接続用設定の取得
 
-![]()
-![]()
-![]()
-![]()
-![]()
+まずは、Philips Hue BridgeとNode-Redを連携させるため、API Keyを発行します
 
-## Step2. Node-Red と Philips Hue の接続
+1. Hue Bridgeの設定を行うため、ブラウザでCLIP API Debugger（`http://<hue_bridge_ip>/debug/clip.html`）へアクセスします
+![](/images/clip_api_debugger.png =350x)
+2. Hue Bridgeのリンクボタンを押したうえで、以下の通りリクエストを発行します。そうすると、Responseで、キー：username の値として API Keyが発行されます。
+   * URL: /api
+   * POST
+   * Message Body: `{"devicetype": "my_hue_app"}`  ※　値は任意です
+![](/images/get_api_key.png =350x)
+3. api key を使って以下の通り入力し、Hue Lightの一覧を取得してみます
+   * URL: `/api/<api-key>/lights`
+   * GET
+![](/images/get-lights.png =350x)
+
+（より詳細な CLIP API Debuggerの使い方は[Get Started - Philips Hue Developer Program](https://developers.meethue.com/develop/get-started-2/) の記事をご覧ください ）
+
+## Step2. Node-Red と Philips Hue Bridge の接続
+
+続いて Node-Red に ノード "[node-red-contrib-huemagic](https://flows.nodered.org/node/node-red-contrib-huemagic)" を追加し、Hue Bridgeと接続します。
+
+
+1. パレット > ノードを追加　から install-node-red-contrib-huemagic を検索し導入します
+![](/images/install-node-red-contrib-huemagic.png)
+2. HueMagicのノードから、Hue Lightを選択し、フローに配置します
+![](/images/huemagic-pallet.png =200x)
+3. Hue Lightノードをダブルクリックし、Hue Lightノードのプロパティ設定画面の Bridgeから、「新規にHue Bridgeを追加」を選択しブリッジ追加画面へ進み以下の通り設定し「追加」します
+    * Name: 任意の名前を入力
+    * Bridge IP: 虫メガネのアイコンをクリックして LAN内のHue Bridgeを検索し選択
+    * API Key: Step1 で生成したAPI Key
+![](/images/add-hue-bridge.png =350x)
+4. 再びHue Lightノードのプロパティ設定画面へ戻り、以下の通り設定します
+    * Name: 任意の名前を入力
+    * Bridge: 3. で追加したBridge
+    * Light: 今回利用するライトを選択
+![](/images/hue-light-property.png)
+
+以上で、Node-Red から Hue Bridge経由でスマートライトの点灯や色の変更などができるようになりました
+
+## Step3. Hue Lightの制御をフローに組み込む
+
+最後のステップとして、ダッシュボードを表示させたフローに追加でHue Lightの制御を組み込んでいきます。
+今回は、簡略化して　前後の頭の傾きを姿勢の良さの指標に使っていきます（多くのメトリクスを組み合わせたより精緻な判定は今後検討していきます）。  
+完成図がこちらのようになります。順を追って要素ごとに解説していきます。
+
+![](/images/flow-over-view.png)
+
+
+### Rate Limit の設定
+API の呼び出し数が過剰になり過ぎないよう流量制御のノードを全段に配置します。1秒に1度だけメッセージを通過させて、その他のメッセージは破棄するよう以下のように設定します。
+
+![](/images/rate-limit.png =350x)
+
+###  メトリクスの判定
+流れてきたメトリクスの値によって、その後に呼び出すノードを切り替えるため Switch ノードを使い以下のように設定します。
+絶対値が 7以上になったら 1 or 2 のノードへ、6未満3以上の場合 3 or 4 のノードへ、3未満の場合 5 のノードへ遷移するように設定しました。
+![](/images/switch-node.png =350x)
+
+ノード間を以下のように接続します
+
+![](/images/switch-color-by-metrics.png =600x)
+
+
+### Hue Lightの点灯
+姿勢の良し悪しをライトの色で通知します。メトリクスの判定で実施したSwitchノード設定に合わせて、以下のようにChangeノードのpayload に設定することで、ライトを点灯させます。
+* 1 or 2 -> 赤く点灯 : `{"on":true,"brightness":100,"hex":"A60000"}`
+* 3 or 4 -> 黄色く点灯: `{"on":true,"brightness":100,"hex":"E5BF00"}`
+* 5 -> 青く点灯: `{"on":true,"brightness":100,"hex":"6666ff"}`
+![](/images/set-light-color.png =350x)
+
+ノード間を以下のように接続します
+
+![](/images/set-light-color-on.png =600x)
+
+# 完成！
+
+完成品を動かすとこんな感じになります！
+
+https://youtu.be/eEy5QCTcw_E
+
+# おわりに
+
+今回、JINS MEMEのセンサーデータをスマートデバイスを連携させて姿勢チェックに使ってみました。簡単化のために利用するメトリクスやデバイスも最小限のものに限って実施しましたが、JINS MEMEには他にも色々なデータが取得できます。また、簡単に連携可能なスマートデバイスも巷に沢山存在しています。
+次は活用するメトリクスや連携するデバイスのバリエーションを増やしたり、分析ロジックをもっと賢くリッチにしたり、と色々トライしてみたいと思います！
 
 
 # References
-本記事を書くにあたって参考にさせていただきました
+本記事を書くにあたって大変大変 参考にさせていただきました m(_ _)m
 
-* https://ipsj.ixsq.nii.ac.jp/ej/index.php?active_action=repository_view_main_item_detail&page_id=13&block_id=8&item_id=184500&item_no=1
+* [アイウェアによる集中力センシングに基づいた行動変容システムの設計](https://ipsj.ixsq.nii.ac.jp/ej/index.php?active_action=repository_view_main_item_detail&page_id=13&block_id=8&item_id=184500&item_no=1)
 * http://yuichi-dev.blogspot.com/2017/02/jinsjins-meme-philips-hue.html
