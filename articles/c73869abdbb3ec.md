@@ -77,8 +77,9 @@ plt.show()
 
 画像にすると、フレーズやテーマのまとまりがわかり易くなります
 
+シンガー1 
 ![mel_spec_audio1](/images/mel_spec_audio1.png)
-
+シンガー2 
 ![mel_spec_audio2](/images/mel_spec_audio2.png)
 
 
