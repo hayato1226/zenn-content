@@ -3,7 +3,7 @@ title: "ザトウクジラの歌を分析する"
 emoji: "🤖"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["whale-song","analytics"]
-published: false
+published: true
 ---
 
 # はじめに
@@ -53,7 +53,7 @@ jupyter lab
 ```
 
 Jupyter Labで以下を実行して可視化します
-```
+```python
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
